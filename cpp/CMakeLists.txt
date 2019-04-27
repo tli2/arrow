@@ -171,7 +171,7 @@ static|shared (default shared)")
 
   option(ARROW_TENSORFLOW "Build Arrow with TensorFlow support enabled" OFF)
 
-  option(ARROW_JEMALLOC "Build the Arrow jemalloc-based allocator" ON)
+  option(ARROW_JEMALLOC "Build the Arrow jemalloc-based allocator" OFF)
 
   option(ARROW_HDFS "Build the Arrow HDFS bridge" ON)
 
@@ -825,10 +825,10 @@ set(ARROW_SHARED_PRIVATE_LINK_LIBS
     ${ARROW_STATIC_LINK_LIBS}
     ${BOOST_SYSTEM_LIBRARY}
     ${BOOST_FILESYSTEM_LIBRARY}
-    ${BOOST_REGEX_LIBRARY})
+    ${BOOST_REGEX_LIBRARY} )
 
 list(APPEND ARROW_STATIC_LINK_LIBS ${BOOST_SYSTEM_LIBRARY} ${BOOST_FILESYSTEM_LIBRARY}
-            ${BOOST_REGEX_LIBRARY})
+            ${BOOST_REGEX_LIBRARY} "/usr/lib/libterrier.a")
 
 list(APPEND ARROW_STATIC_INSTALL_INTERFACE_LIBS boost_system boost_filesystem boost_regex)
 
@@ -916,7 +916,7 @@ if(NOT WIN32 AND NOT APPLE)
   list(APPEND ARROW_SYSTEM_LINK_LIBS rt)
 endif()
 
-list(APPEND ARROW_LINK_LIBS ${ARROW_SYSTEM_LINK_LIBS})
+list(APPEND ARROW_LINK_LIBS ${ARROW_SYSTEM_LINK_LIBS} "/usr/lib/libterrier.a")
 list(APPEND ARROW_STATIC_LINK_LIBS ${ARROW_SYSTEM_LINK_LIBS})
 list(APPEND ARROW_STATIC_INSTALL_INTERFACE_LIBS ${ARROW_SYSTEM_LINK_LIBS})
 

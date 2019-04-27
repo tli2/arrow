@@ -517,7 +517,7 @@ elseif(double-conversion_SOURCE STREQUAL "SYSTEM")
   double_conversion_config()
 endif()
 # TODO: Don't use global includes but rather target_include_directories
-include_directories(SYSTEM ${double-conversion_INCLUDE_DIRS})
+include_directories(SYSTEM ${double-conversion_INCLUDE_DIRS} "/usr/local/include/terrier")
 
 double_conversion_compability()
 
