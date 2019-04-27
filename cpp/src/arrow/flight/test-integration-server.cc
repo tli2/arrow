@@ -2,8 +2,8 @@
 #include <vector>
 #include <arpa/inet.h>
 #include <netinet/tcp.h>
-#include "flight/api.h"
 #include "util/logging.h"
+#include "api.h"
 #include <terrier/common/macros.h>
 #include <terrier/common/scoped_timer.h>
 #include <terrier/common/worker_pool.h>
