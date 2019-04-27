@@ -828,7 +828,7 @@ set(ARROW_SHARED_PRIVATE_LINK_LIBS
     ${BOOST_REGEX_LIBRARY} )
 
 list(APPEND ARROW_STATIC_LINK_LIBS ${BOOST_SYSTEM_LIBRARY} ${BOOST_FILESYSTEM_LIBRARY}
-            ${BOOST_REGEX_LIBRARY} "/usr/lib/libterrier.a")
+            ${BOOST_REGEX_LIBRARY} "/usr/local/lib/libterrier.a")
 
 list(APPEND ARROW_STATIC_INSTALL_INTERFACE_LIBS boost_system boost_filesystem boost_regex)
 
