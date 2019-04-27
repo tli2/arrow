@@ -2,8 +2,9 @@
 #include <vector>
 #include <arpa/inet.h>
 #include <netinet/tcp.h>
-#include "util/logging.h"
+#include "arrow/table.h"
 #include "api.h"
+#include "arrow/util/logging.h"
 #include <terrier/common/macros.h>
 #include <terrier/common/scoped_timer.h>
 #include <terrier/common/worker_pool.h>
