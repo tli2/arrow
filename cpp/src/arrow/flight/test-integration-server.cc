@@ -37,16 +37,21 @@ class TerrierServer : public arrow::flight::FlightServerBase {
   arrow::Status DoGet(const arrow::flight::ServerCallContext &,
                       const arrow::flight::Ticket &,
                       std::unique_ptr<arrow::flight::FlightDataStream> *stream) override {
+    printf("Connection dispatched\n");
     std::list<storage::RawBlock *> blocks = order_line_->blocks_;
+    uint32_t blocks_accessed = 0;
     std::vector<std::shared_ptr<arrow::Table>> table_chunks;
     for (storage::RawBlock *block : blocks) {
+      blocks_accessed++;
       if (block->controller_.CurrentBlockState() != storage::BlockState::FROZEN || treat_as_hot(generator_)) {
         table_chunks.push_back(MaterializeHotBlock(block));
       } else {
         table_chunks.push_back(storage::ArrowUtil::AssembleToArrowTable(order_line_->accessor_, block));
       }
+      if (blocks_accessed % 500 == 0) printf("%u blocks have been processed\n", blocks_accessed);
     }
     ARROW_CHECK_OK(arrow::ConcatenateTables(table_chunks, &logical_table));
+    printf("data preparation complete, sending...\n");
     *stream = std::unique_ptr<arrow::flight::FlightDataStream>(new arrow::flight::RecordBatchStream(
         std::shared_ptr<arrow::RecordBatchReader>(new arrow::TableBatchReader(*logical_table))));
     return arrow::Status::OK();
@@ -60,6 +65,7 @@ class TerrierServer : public arrow::flight::FlightServerBase {
   bool first_call = true;
   std::shared_ptr<arrow::Table> logical_table;
   uint64_t buf[1024]{};
+  uint32_t block_count = 0;
 
   template<class IntType, class T>
   void Append(T *builder, storage::ProjectedRow *row, uint16_t i) {
