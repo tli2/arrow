@@ -152,13 +152,11 @@ class TerrierServer : public arrow::flight::FlightServerBase {
         arrow::field("", arrow::uint8()),
         arrow::field("", arrow::uint8()),
         arrow::field("", arrow::uint8()),
-        arrow::field("", arrow::uint32()),
         arrow::field("", arrow::uint8()),
         arrow::field("", arrow::uint8())};
 
     std::vector<std::shared_ptr<arrow::Array>> table_vector
-        {ol_dist_info, ol_delivery_d, ol_amount, o_id, ol_i_id, o_d_id, o_w_id, ol_number, ol_i_id, ol_supply_w_id,
-         ol_quantity};
+        {ol_dist_info, ol_delivery_d, ol_amount, o_id, ol_i_id, o_d_id, o_w_id, ol_number, ol_supply_w_id, ol_quantity};
     return arrow::Table::Make(std::make_shared<arrow::Schema>(schema_vector), table_vector);
   }
 };
