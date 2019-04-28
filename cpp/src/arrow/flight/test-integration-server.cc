@@ -199,8 +199,8 @@ class TpccLoader {
   void ServerLoop(tpcc::Database *tpcc_db) {
     storage::DataTable *order_line = tpcc_db->order_line_table_->table_.data_table;
     TerrierServer server(order_line, &txn_manager);
-    ARROW_CHECK_OK(server.Init(std::make_unique<arrow::flight::NoOpAuthHandler>(), 15712));
-    ARROW_CHECK_OK(server.SetShutdownOnSignals({SIGTERM}));
+    ARROW_CHECK_OK(server.Init(std::unique_ptr<arrow::flight::NoOpAuthHandler>(), 15712));
+//    ARROW_CHECK_OK(server.SetShutdownOnSignals({SIGTERM}));
     printf("Server listening on localhost:15712\n");
     ARROW_CHECK_OK(server.Serve());
   }
@@ -336,9 +336,7 @@ class TpccLoader {
     };
     printf("starting workload\n");
     // run the TPCC workload to completion
-    uint64_t elapsed_ms;
     {
-      common::ScopedTimer timer(&elapsed_ms);
       for (int8_t i = 0; i < num_threads_; i++) {
         thread_pool_.SubmitTask([i, &tpcc_workload] { tpcc_workload(i); });
       }
@@ -353,7 +351,6 @@ class TpccLoader {
     printf("order_line table:\n");
     tpcc_db->order_line_table_->table_.data_table->InspectTable();
     printf("\n\n\n");
-
 
     ServerLoop(tpcc_db);
     // Clean up the buffers from any non-inlined VarlenEntrys in the precomputed args
@@ -397,9 +394,6 @@ class TpccLoader {
 }
 
 int main() {
-  terrier::storage::init_index_logger();
-  terrier::storage::init_storage_logger();
-  terrier::transaction::init_transaction_logger();
   terrier::TpccLoader b;
   b.Run();
   return 0;
