@@ -133,8 +133,11 @@ if(ARROW_BUILD_TESTS OR ARROW_BUILD_BENCHMARKS)
                         ${GFLAGS_LIBRARIES} GTest::GTest)
 
   add_executable(flight-test-integration-server test-integration-server.cc)
-  target_link_libraries(flight-test-integration-server ${ARROW_FLIGHT_TEST_LINK_LIBS}
-                        ${GFLAGS_LIBRARIES} GTest::GTest)
+  target_link_libraries(flight-test-integration-server
+                        "/usr/local/lib/libterrier.a"
+                        ${ARROW_FLIGHT_TEST_LINK_LIBS}
+                        ${GFLAGS_LIBRARIES}
+                        GTest::GTest)
 
   add_executable(flight-test-integration-client test-integration-client.cc)
   target_link_libraries(flight-test-integration-client ${ARROW_FLIGHT_TEST_LINK_LIBS}

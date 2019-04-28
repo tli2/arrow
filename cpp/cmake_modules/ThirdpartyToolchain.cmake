@@ -439,6 +439,9 @@ endif()
 set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(Threads REQUIRED)
 
+find_package(TBB REQUIRED)
+include_directories(SYSTEM ${TBB_INCLUDE_DIRS})
+
 # ----------------------------------------------------------------------
 # Google double-conversion
 

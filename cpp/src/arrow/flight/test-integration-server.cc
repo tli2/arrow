@@ -65,9 +65,11 @@ class TerrierServer : public arrow::flight::FlightServerBase {
   void Append(T *builder, storage::ProjectedRow *row, uint16_t i) {
     auto *int_pointer = row->AccessWithNullCheck(i);
     if (int_pointer == nullptr)
-      auto status UNUSED_ATTRIBUTE = builder->AppendNull();
+      auto status
+      UNUSED_ATTRIBUTE = builder->AppendNull();
     else
-    auto status1 UNUSED_ATTRIBUTE = builder->Append(*reinterpret_cast<IntType *>(int_pointer));
+      auto status1
+      UNUSED_ATTRIBUTE = builder->Append(*reinterpret_cast<IntType *>(int_pointer));
   }
 
   std::shared_ptr<arrow::Table> MaterializeHotBlock(storage::RawBlock *block) {
@@ -106,11 +108,13 @@ class TerrierServer : public arrow::flight::FlightServerBase {
 
       auto *varlen_pointer = row->AccessWithNullCheck(storage::DirtyGlobals::ol_dist_info_insert_pr_offset);
       if (varlen_pointer == nullptr) {
-        auto status UNUSED_ATTRIBUTE = ol_dist_info_builder.AppendNull();
+        auto status
+        UNUSED_ATTRIBUTE = ol_dist_info_builder.AppendNull();
       } else {
         auto *entry = reinterpret_cast<storage::VarlenEntry *>(varlen_pointer);
-        auto status2 UNUSED_ATTRIBUTE =
-                         ol_dist_info_builder.Append(reinterpret_cast<const uint8_t *>(entry->Content()), entry->Size());
+        auto status2
+        UNUSED_ATTRIBUTE =
+            ol_dist_info_builder.Append(reinterpret_cast<const uint8_t *>(entry->Content()), entry->Size());
       }
     }
 
@@ -118,31 +122,43 @@ class TerrierServer : public arrow::flight::FlightServerBase {
 
     std::shared_ptr<arrow::Array> o_id, o_d_id, o_w_id, ol_number,
         ol_i_id, ol_supply_w_id, ol_delivery_d, ol_quantity, ol_amount, ol_dist_info;
-    auto status UNUSED_ATTRIBUTE = o_id_builder.Finish(&o_id);
-    auto status1 UNUSED_ATTRIBUTE = o_d_id_builder.Finish(&o_d_id);
-    auto status2 UNUSED_ATTRIBUTE = o_w_id_builder.Finish(&o_w_id);
-    auto status3 UNUSED_ATTRIBUTE = ol_number_builder.Finish(&ol_number);
-    auto status4 UNUSED_ATTRIBUTE = ol_i_id_builder.Finish(&ol_i_id);
-    auto status5 UNUSED_ATTRIBUTE = ol_supply_w_id_builder.Finish(&ol_supply_w_id);
-    auto status6 UNUSED_ATTRIBUTE = ol_delivery_d_builder.Finish(&ol_delivery_d);
-    auto status7 UNUSED_ATTRIBUTE = ol_quantity_builder.Finish(&ol_quantity);
-    auto status8 UNUSED_ATTRIBUTE = ol_amount_builder.Finish(&ol_amount);
-    auto status9 UNUSED_ATTRIBUTE = ol_dist_info_builder.Finish(&ol_dist_info);
+    auto status
+    UNUSED_ATTRIBUTE = o_id_builder.Finish(&o_id);
+    auto status1
+    UNUSED_ATTRIBUTE = o_d_id_builder.Finish(&o_d_id);
+    auto status2
+    UNUSED_ATTRIBUTE = o_w_id_builder.Finish(&o_w_id);
+    auto status3
+    UNUSED_ATTRIBUTE = ol_number_builder.Finish(&ol_number);
+    auto status4
+    UNUSED_ATTRIBUTE = ol_i_id_builder.Finish(&ol_i_id);
+    auto status5
+    UNUSED_ATTRIBUTE = ol_supply_w_id_builder.Finish(&ol_supply_w_id);
+    auto status6
+    UNUSED_ATTRIBUTE = ol_delivery_d_builder.Finish(&ol_delivery_d);
+    auto status7
+    UNUSED_ATTRIBUTE = ol_quantity_builder.Finish(&ol_quantity);
+    auto status8
+    UNUSED_ATTRIBUTE = ol_amount_builder.Finish(&ol_amount);
+    auto status9
+    UNUSED_ATTRIBUTE = ol_dist_info_builder.Finish(&ol_dist_info);
 
-    std::vector<std::shared_ptr<arrow::Field>> schema_vector{arrow::field("o_id", arrow::uint32()),
-                                                             arrow::field("o_d_id", arrow::uint8()),
-                                                             arrow::field("o_w_id", arrow::uint8()),
-                                                             arrow::field("ol_number", arrow::uint8()),
-                                                             arrow::field("ol_i_id", arrow::uint32()),
-                                                             arrow::field("ol_supply_w_id", arrow::uint8()),
-                                                             arrow::field("ol_delivery_d", arrow::uint64()),
-                                                             arrow::field("ol_quantity", arrow::uint8()),
-                                                             arrow::field("ol_amount", arrow::float64()),
-                                                             arrow::field("ol_dist_info", arrow::utf8())};
+    std::vector<std::shared_ptr<arrow::Field>> schema_vector{
+        arrow::field("ol_dist_info", arrow::utf8()),
+        arrow::field("ol_delivery_d", arrow::uint64()),
+        arrow::field("ol_amount", arrow::float64()),
+        arrow::field("o_id", arrow::uint32()),
+        arrow::field("ol_i_id", arrow::uint32()),
+        arrow::field("o_d_id", arrow::uint8()),
+        arrow::field("o_w_id", arrow::uint8()),
+        arrow::field("ol_number", arrow::uint8()),
+        arrow::field("ol_i_id", arrow::uint32()),
+        arrow::field("ol_supply_w_id", arrow::uint8()),
+        arrow::field("ol_quantity", arrow::uint8())};
 
-    std::vector<std::shared_ptr<arrow::Array>> table_vector{o_id, o_d_id, o_w_id, ol_number,
-                                                            ol_i_id, ol_supply_w_id, ol_delivery_d, ol_quantity,
-                                                            ol_amount, ol_dist_info};
+    std::vector<std::shared_ptr<arrow::Array>> table_vector
+        {ol_dist_info, ol_delivery_d, ol_amount, o_id, ol_i_id, o_d_id, o_w_id, ol_number, ol_i_id, ol_supply_w_id,
+         ol_quantity};
     return arrow::Table::Make(std::make_shared<arrow::Schema>(schema_vector), table_vector);
   }
 };
@@ -188,7 +204,7 @@ class TpccLoader {
   storage::AccessObserver access_observer_{&compactor_};
 
   const int8_t num_threads_ = 6;
-  const uint32_t num_precomputed_txns_per_worker_ = 5000000;
+  const uint32_t num_precomputed_txns_per_worker_ = 10000;
   const uint32_t w_payment = 43;
   const uint32_t w_delivery = 4;
   const uint32_t w_order_status = 4;
