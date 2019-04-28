@@ -46,7 +46,6 @@ class TerrierServer : public arrow::flight::FlightServerBase {
         table_chunks.push_back(storage::ArrowUtil::AssembleToArrowTable(order_line_->accessor_, block));
       }
     }
-    std::shared_ptr<arrow::Table> logical_table;
     ARROW_CHECK_OK(arrow::ConcatenateTables(table_chunks, &logical_table));
     *stream = std::unique_ptr<arrow::flight::FlightDataStream>(new arrow::flight::RecordBatchStream(
         std::shared_ptr<arrow::RecordBatchReader>(new arrow::TableBatchReader(*logical_table))));
@@ -59,6 +58,7 @@ class TerrierServer : public arrow::flight::FlightServerBase {
   std::default_random_engine generator_;
   std::bernoulli_distribution treat_as_hot{0};
   bool first_call = true;
+  std::shared_ptr<arrow::Table> logical_table;
   uint64_t buf[1024]{};
 
   template<class IntType, class T>
