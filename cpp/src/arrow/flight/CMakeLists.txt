@@ -135,6 +135,8 @@ if(ARROW_BUILD_TESTS OR ARROW_BUILD_BENCHMARKS)
   add_executable(flight-test-integration-server test-integration-server.cc)
   target_link_libraries(flight-test-integration-server
                         "/usr/local/lib/libterrier.a"
+                        ${TBB_LIBRARIES}
+                        "atomic"
                         ${ARROW_FLIGHT_TEST_LINK_LIBS}
                         ${GFLAGS_LIBRARIES}
                         GTest::GTest)

@@ -90,7 +90,7 @@ class TerrierServer : public arrow::flight::FlightServerBase {
     arrow::Int8Builder ol_supply_w_id_builder;
     arrow::Int64Builder ol_delivery_d_builder;
     arrow::Int8Builder ol_quantity_builder;
-    arrow::DoubleBuilder ol_amount_builder;
+    arrow::Int64Builder ol_amount_builder;
     arrow::StringBuilder ol_dist_info_builder;
     for (uint32_t i = 0; i < layout.NumSlots(); i++) {
       storage::TupleSlot slot(block, i);
@@ -104,7 +104,7 @@ class TerrierServer : public arrow::flight::FlightServerBase {
       Append<uint8_t>(&ol_supply_w_id_builder, row, storage::DirtyGlobals::ol_supply_w_id_insert_pr_offset);
       Append<uint64_t>(&ol_delivery_d_builder, row, storage::DirtyGlobals::ol_delivery_d_insert_pr_offset);
       Append<uint8_t>(&ol_quantity_builder, row, storage::DirtyGlobals::ol_quantity_insert_pr_offset);
-      Append<double>(&ol_amount_builder, row, storage::DirtyGlobals::ol_amount_insert_pr_offset);
+      Append<uint64_t>(&ol_amount_builder, row, storage::DirtyGlobals::ol_amount_insert_pr_offset);
 
       auto *varlen_pointer = row->AccessWithNullCheck(storage::DirtyGlobals::ol_dist_info_insert_pr_offset);
       if (varlen_pointer == nullptr) {
@@ -146,7 +146,7 @@ class TerrierServer : public arrow::flight::FlightServerBase {
     std::vector<std::shared_ptr<arrow::Field>> schema_vector{
         arrow::field("ol_dist_info", arrow::utf8()),
         arrow::field("ol_delivery_d", arrow::uint64()),
-        arrow::field("ol_amount", arrow::float64()),
+        arrow::field("ol_amount", arrow::uint64()),
         arrow::field("o_id", arrow::uint32()),
         arrow::field("ol_i_id", arrow::uint32()),
         arrow::field("o_d_id", arrow::uint8()),
