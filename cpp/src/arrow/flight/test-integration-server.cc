@@ -144,17 +144,17 @@ class TerrierServer : public arrow::flight::FlightServerBase {
     UNUSED_ATTRIBUTE = ol_dist_info_builder.Finish(&ol_dist_info);
 
     std::vector<std::shared_ptr<arrow::Field>> schema_vector{
-        arrow::field("ol_dist_info", arrow::utf8()),
-        arrow::field("ol_delivery_d", arrow::uint64()),
-        arrow::field("ol_amount", arrow::uint64()),
-        arrow::field("o_id", arrow::uint32()),
-        arrow::field("ol_i_id", arrow::uint32()),
-        arrow::field("o_d_id", arrow::uint8()),
-        arrow::field("o_w_id", arrow::uint8()),
-        arrow::field("ol_number", arrow::uint8()),
-        arrow::field("ol_i_id", arrow::uint32()),
-        arrow::field("ol_supply_w_id", arrow::uint8()),
-        arrow::field("ol_quantity", arrow::uint8())};
+        arrow::field("", arrow::utf8()),
+        arrow::field("", arrow::uint64()),
+        arrow::field("", arrow::uint64()),
+        arrow::field("", arrow::uint32()),
+        arrow::field("", arrow::uint32()),
+        arrow::field("", arrow::uint8()),
+        arrow::field("", arrow::uint8()),
+        arrow::field("", arrow::uint8()),
+        arrow::field("", arrow::uint32()),
+        arrow::field("", arrow::uint8()),
+        arrow::field("", arrow::uint8())};
 
     std::vector<std::shared_ptr<arrow::Array>> table_vector
         {ol_dist_info, ol_delivery_d, ol_amount, o_id, ol_i_id, o_d_id, o_w_id, ol_number, ol_i_id, ol_supply_w_id,
