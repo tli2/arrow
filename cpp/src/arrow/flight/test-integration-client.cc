@@ -47,7 +47,7 @@ int main() {
   std::unique_ptr<arrow::RecordBatchReader> stream;
   ARROW_CHECK_OK(read_client->DoGet(ticket, &stream));
   printf("Connection Established, receiving data...\n");
-  std::shared_ptr<arrow::Table> retrieved_data;
+  std::shared_ptr<arrow::Table> table;
   std::vector<std::shared_ptr<arrow::RecordBatch>> retrieved_chunks;
   std::shared_ptr<arrow::RecordBatch> chunk;
   while (true) {
@@ -57,10 +57,24 @@ int main() {
   }
   printf("Data all received, converting...\n");
   std::shared_ptr<arrow::Schema> schema = stream->schema();
-  ARROW_CHECK_OK(arrow::Table::FromRecordBatches(schema, retrieved_chunks, &retrieved_data));
-  volatile void *foo = retrieved_data.get();
+  ARROW_CHECK_OK(arrow::Table::FromRecordBatches(schema, retrieved_chunks, &table));
   printf("Transmission complete\n");
   std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
   fprintf(stdout, "Client side TOTAL duration: %ld\n", std::chrono::duration_cast<std::chrono::microseconds>(end - start).count());
+
+  uint64_t size = 0;
+  int32_t num_cols = table->num_columns();
+  for (int32_t ci = 0; ci < num_cols; ci++) {
+    auto col = table->column(ci);
+    for (int32_t foo = 0; foo < col->data()->num_chunks(); foo++) {
+      auto array_data = col->data()->chunk(0)->data();
+      // std::cout << "  array_data length: " << length << std::endl;
+      for (uint64_t bi = 0; bi < array_data->buffers.size(); bi++) {
+        auto buffer = array_data->buffers[bi];
+        size += buffer->size();
+      }
+    }
+  }
+  printf("total received bytes:%lu\n", size);
   return 0;
 }
