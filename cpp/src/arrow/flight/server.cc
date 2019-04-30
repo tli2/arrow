@@ -442,7 +442,7 @@ FlightServerBase::FlightServerBase() { impl_.reset(new Impl); }
 FlightServerBase::~FlightServerBase() {}
 
 Status FlightServerBase::Init(std::unique_ptr<ServerAuthHandler> auth_handler, int port) {
-  impl_->address_ = "localhost:" + std::to_string(port);
+  impl_->address_ = "snode:" + std::to_string(port);
   std::shared_ptr<ServerAuthHandler> handler = std::move(auth_handler);
   impl_->service_.reset(new FlightServiceImpl(handler, this));
 

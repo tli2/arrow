@@ -40,7 +40,7 @@
 
 int main() {
   std::unique_ptr<arrow::flight::FlightClient> read_client;
-  ARROW_CHECK_OK(arrow::flight::FlightClient::Connect("127.0.0.1", 15712, &read_client));
+  ARROW_CHECK_OK(arrow::flight::FlightClient::Connect("snode", 15712, &read_client));
   printf("Connection Request Sent\n");
   std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
   arrow::flight::Ticket ticket{};
