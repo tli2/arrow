@@ -52,6 +52,21 @@ class TerrierServer : public arrow::flight::FlightServerBase {
     }
     ARROW_CHECK_OK(arrow::ConcatenateTables(table_chunks, &logical_table));
     printf("data preparation complete, sending...\n");
+    uint64_t size = 0;
+    int32_t num_cols = logical_table->num_columns();
+    for (int32_t ci = 0; ci < num_cols; ci++) {
+      auto col = logical_table->column(ci);
+      for (int32_t foo = 0; foo < col->data()->num_chunks(); foo++) {
+        auto array_data = col->data()->chunk(foo)->data();
+        for (uint64_t bi = 0; bi < array_data->buffers.size(); bi++) {
+          auto buffer = array_data->buffers[bi];
+          if (buffer.get() == nullptr) continue;
+          size += buffer->size();
+        }
+      }
+    }
+    printf("server side has %lu bytes of data\n", size);
+
     *stream = std::unique_ptr<arrow::flight::FlightDataStream>(new arrow::flight::RecordBatchStream(
         std::shared_ptr<arrow::RecordBatchReader>(new arrow::TableBatchReader(*logical_table))));
     return arrow::Status::OK();

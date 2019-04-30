@@ -67,10 +67,10 @@ int main() {
   for (int32_t ci = 0; ci < num_cols; ci++) {
     auto col = table->column(ci);
     for (int32_t foo = 0; foo < col->data()->num_chunks(); foo++) {
-      auto array_data = col->data()->chunk(0)->data();
-      // std::cout << "  array_data length: " << length << std::endl;
+      auto array_data = col->data()->chunk(foo)->data();
       for (uint64_t bi = 0; bi < array_data->buffers.size(); bi++) {
         auto buffer = array_data->buffers[bi];
+        if (buffer.get() == nullptr) continue;
         size += buffer->size();
       }
     }
