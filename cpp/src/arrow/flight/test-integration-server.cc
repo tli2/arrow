@@ -33,12 +33,19 @@ class TerrierServer : public arrow::flight::FlightServerBase {
  public:
   TerrierServer(storage::DataTable *order_line, transaction::TransactionManager *manager)
       : order_line_(order_line), manager_(manager) {}
+  arrow::Status DoAction(const arrow::flight::ServerCallContext &,
+                         const arrow::flight::Action &action,
+                         std::unique_ptr<arrow::flight::ResultStream> *out) override {
+    double hot_ratio = std::stod(action.type);
+    printf("Connection dispatched, hot ratio:%f\n", hot_ratio);
+    *out = std::unique_ptr<arrow::flight::ResultStream>(new arrow::flight::SimpleResultStream({}));
+    return arrow::Status::OK();
+  }
 
   arrow::Status DoGet(const arrow::flight::ServerCallContext &,
-                      const arrow::flight::Ticket &ticket,
+                      const arrow::flight::Ticket &,
                       std::unique_ptr<arrow::flight::FlightDataStream> *stream) override {
-    double hot_ratio = std::stod(ticket.ticket);
-    printf("Connection dispatched, hot ratio:%f\n", hot_ratio);
+
     std::bernoulli_distribution treat_as_hot{hot_ratio};
     std::list<storage::RawBlock *> blocks = order_line_->blocks_;
     uint32_t blocks_accessed = 0;
@@ -81,7 +88,7 @@ class TerrierServer : public arrow::flight::FlightServerBase {
   bool first_call = true;
   std::shared_ptr<arrow::Table> logical_table;
   uint64_t buf[1024]{};
-  uint32_t block_count = 0;
+  double hot_ratio;
 
   template<class IntType, class T>
   void Append(T *builder, storage::ProjectedRow *row, uint16_t i) {

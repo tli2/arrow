@@ -43,10 +43,12 @@ int main(int argc, char **argv) {
   ARROW_CHECK_OK(arrow::flight::FlightClient::Connect("snode", 15712, &read_client));
   printf("Connection Request Sent\n");
   std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
-  arrow::flight::Ticket ticket{};
-  ticket.ticket = std::string(argv[1]);
+  arrow::flight::Action action{};
+  action.type = std::string(argv[1]);
+  std::unique_ptr<arrow::flight::ResultStream> res;
+  ARROW_CHECK_OK(read_client->DoAction(action, &res));
   std::unique_ptr<arrow::RecordBatchReader> stream;
-  ARROW_CHECK_OK(read_client->DoGet(ticket, &stream));
+  ARROW_CHECK_OK(read_client->DoGet(arrow::flight::Ticket{}, &stream));
   printf("Connection Established, receiving data...\n");
   std::shared_ptr<arrow::Table> table;
   std::vector<std::shared_ptr<arrow::RecordBatch>> retrieved_chunks;
