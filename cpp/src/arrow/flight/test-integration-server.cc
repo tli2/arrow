@@ -35,9 +35,11 @@ class TerrierServer : public arrow::flight::FlightServerBase {
       : order_line_(order_line), manager_(manager) {}
 
   arrow::Status DoGet(const arrow::flight::ServerCallContext &,
-                      const arrow::flight::Ticket &,
+                      const arrow::flight::Ticket &ticket,
                       std::unique_ptr<arrow::flight::FlightDataStream> *stream) override {
-    printf("Connection dispatched\n");
+    double hot_ratio = std::stod(ticket.ticket);
+    printf("Connection dispatched, hot ratio:%f\n", hot_ratio);
+    std::bernoulli_distribution treat_as_hot{hot_ratio};
     std::list<storage::RawBlock *> blocks = order_line_->blocks_;
     uint32_t blocks_accessed = 0;
     std::vector<std::shared_ptr<arrow::Table>> table_chunks;
@@ -76,7 +78,6 @@ class TerrierServer : public arrow::flight::FlightServerBase {
   storage::DataTable *order_line_;
   transaction::TransactionManager *manager_;
   std::default_random_engine generator_;
-  std::bernoulli_distribution treat_as_hot{0};
   bool first_call = true;
   std::shared_ptr<arrow::Table> logical_table;
   uint64_t buf[1024]{};

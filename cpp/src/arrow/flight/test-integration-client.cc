@@ -38,12 +38,13 @@
 #include "arrow/flight/api.h"
 #include "arrow/flight/test-util.h"
 
-int main() {
+int main(int argc, char **argv) {
   std::unique_ptr<arrow::flight::FlightClient> read_client;
   ARROW_CHECK_OK(arrow::flight::FlightClient::Connect("snode", 15712, &read_client));
   printf("Connection Request Sent\n");
   std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
   arrow::flight::Ticket ticket{};
+  ticket.ticket = std::string(argv[1]);
   std::unique_ptr<arrow::RecordBatchReader> stream;
   ARROW_CHECK_OK(read_client->DoGet(ticket, &stream));
   printf("Connection Established, receiving data...\n");
